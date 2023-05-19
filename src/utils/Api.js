@@ -27,18 +27,18 @@ class Api {
     return fetch(this._url + '/users/me/avatar', {
       method: 'PATCH',
       headers: this._headers,
-      body: JSON.stringify({avatar: avatar})
+      body: JSON.stringify(avatar)
     })
       .then(this._getResponse);
   }
 
-  editUserInfo(name, about) {
+  editUserInfo(data) {
     return fetch(this._url + '/users/me', {
       method: 'PATCH',
       headers: this._headers,
       body: JSON.stringify({
-        name: name,
-        about: about
+        name: data.name,
+        about: data.about
       })
     })
       .then(this._getResponse);
@@ -67,6 +67,14 @@ class Api {
     }
   }
 
+  changeLikeCardStatus(id, isLiked) {
+    if (isLiked) {
+        return this.setLike(id, this.isLiked);
+    } else {
+        return this.deleteLike(id);
+    }
+}
+
   deleteLike(id) {
     return fetch(`${this._url}/cards/${id}/likes`, {
         method: "DELETE",
@@ -74,14 +82,16 @@ class Api {
     }).then(this._getResponse);
   }
 
-  addCard(data) {
-    return fetch(this._url + '/cards', {
-      method: 'POST',
-      headers: this._headers,
-      body: JSON.stringify(data)
-    })
-      .then(this._getResponse);
-  }
+  addCard({name, link}) {
+    return fetch(`${this._url}/cards`, {
+        method: "POST",
+        headers: this._headers,
+        body: JSON.stringify({
+            name,
+            link,
+        }),
+    }).then((res) => this._getResponse(res));
+}
 
   deleteCard(id) {
     return fetch(`${this._url}/cards/${id}`, {
@@ -101,5 +111,3 @@ const api = new Api({
 });
 
 export default api;
-
-
